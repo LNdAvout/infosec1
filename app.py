@@ -30,14 +30,14 @@ def _register_routes(app):
 
         if not username or not password:
             return jsonify({
-                "error": "Имя пользователя и пароль обязательны"
+                "error": "Username and password are required"
             }), 400
 
         user = User.query.filter_by(username=username).first()
 
         if not user or not verify_password(password, user.password_hash):
             return jsonify({
-                "error": "Неверное имя пользователя или пароль"
+                "error": "Invalid username or password"
             }), 401
 
         token_payload = {
@@ -64,17 +64,17 @@ def _register_routes(app):
 
         if not username or not password:
             return jsonify({
-                "error": "Имя пользователя и пароль обязательны"
+                "error": "Username and password are required"
             }), 400
 
         if len(password) < 5:
             return jsonify({
-                "error": "Пароль должен быть не менее 5 символов"
+                "error": "Password must be at least 5 characters"
             }), 400
 
         if User.query.filter_by(username=username).first():
             return jsonify({
-                "error": "Имя пользователя уже занято"
+                "error": "Username already taken"
             }), 400
 
         password_hash = hash_password(password)
@@ -84,7 +84,7 @@ def _register_routes(app):
         db.session.commit()
 
         return jsonify({
-            "message": "Пользователь зарегистрирован",
+            "message": "User registered successfully",
             "user_id": new_user.id
         }), 201
 
@@ -117,15 +117,15 @@ def require_auth(app_instance):
 
             if not auth_header.startswith("Bearer "):
                 return jsonify({
-                    "error": "Требуется авторизация",
-                    "details": "Используйте заголовок: Authorization: Bearer <ваш_токен>"
+                    "error": "Authorization required",
+                    "details": "Use header: Authorization: Bearer <your_token>"
                 }), 401
 
             token = auth_header.split(" ", 1)[1].strip()
 
             if not token:
                 return jsonify({
-                    "error": "Токен не предоставлен"
+                    "error": "Token not provided"
                 }), 401
 
             try:
@@ -137,13 +137,13 @@ def require_auth(app_instance):
 
                 if "sub" not in payload or "username" not in payload:
                     return jsonify({
-                        "error": "Некорректный токен",
-                        "details": "Отсутствуют обязательные поля"
+                        "error": "Invalid token",
+                        "details": "Required fields are missing"
                     }), 401
 
             except Exception as error:
                 return jsonify({
-                    "error": "Некорректный токен",
+                    "error": "Invalid token",
                     "details": str(error)
                 }), 401
 
