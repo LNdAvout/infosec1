@@ -1,0 +1,10 @@
+venv/
+.env
+instance/
+report/
+__pycache__/
+*.pyc
+data.db
+*.log
+.DS_Store
+.idea/
